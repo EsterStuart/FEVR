@@ -2,20 +2,14 @@
 
 [ext_resource type="Script" path="res://3d_file_node.gd" id="1_ymoyh"]
 
-[sub_resource type="BoxShape3D" id="BoxShape3D_pa8ls"]
-size = Vector3(1, 0.225, 1)
-
 [sub_resource type="PlaneMesh" id="PlaneMesh_drjk1"]
 size = Vector2(1, 1)
 
-[node name="3DFileNode" type="Node3D"]
+[sub_resource type="BoxShape3D" id="BoxShape3D_pa8ls"]
+size = Vector3(1, 0.225, 1)
+
+[node name="3DFileNode" type="Area3D"]
 script = ExtResource("1_ymoyh")
-
-[node name="NodeInputArea" type="Area3D" parent="."]
-transform = Transform3D(1.91069e-15, -4.37114e-08, -1, -1, -4.37114e-08, 0, -4.37114e-08, 1, -4.37114e-08, 0, 0, 0)
-
-[node name="CollisionShape3D" type="CollisionShape3D" parent="NodeInputArea"]
-shape = SubResource("BoxShape3D_pa8ls")
 
 [node name="NodeMesh" type="MeshInstance3D" parent="."]
 transform = Transform3D(1.91069e-15, -4.37114e-08, -1, -1, -4.37114e-08, 0, -4.37114e-08, 1, -4.37114e-08, 0, 0, 0)
@@ -25,4 +19,8 @@ mesh = SubResource("PlaneMesh_drjk1")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.620607, 0)
 text = "FileName"
 
-[connection signal="input_event" from="NodeInputArea" to="." method="_on_node_input_area_input_event"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+transform = Transform3D(1.91069e-15, -4.37114e-08, -1, -1, -4.37114e-08, 0, -4.37114e-08, 1, -4.37114e-08, 0, 0, 0)
+shape = SubResource("BoxShape3D_pa8ls")
+
+[connection signal="input_event" from="." to="." method="_on_input_event"]
