@@ -25,7 +25,7 @@ func _on_input_event(camera: Node, event: InputEvent, event_position: Vector3, n
 		if event.button_index == MOUSE_BUTTON_LEFT and event.double_click:
 			on_activated.emit(self)
 
-
+#
 #
 #class_name FileNode3D
 #extends Area3D

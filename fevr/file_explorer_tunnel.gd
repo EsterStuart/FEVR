@@ -5,20 +5,14 @@ var file_node_scene = preload("res://objects/nodes/file_node_3d.tscn")
 
 var semaphore : Semaphore = Semaphore.new()
 var thread : Thread = Thread.new()
-var thread_2 : Thread = Thread.new()
-var thread_3 : Thread = Thread.new()
+
 
 func create_directory(directory_path : String):
-	semaphore.post()
-	var error = thread.start(open_directory.bind(directory_path))
-	#var error = thread.start(hello)
+	open_directory(directory_path)
 
-	thread.wait_to_finish()
-	print("finished_CD")
 
 
 func open_directory(directory_path : String):
-		semaphore.try_wait()
 		var directories = DirAccess.get_directories_at(directory_path)
 		var files = DirAccess.get_files_at(directory_path)
 		var resources := build_resource_array(directories, files, directory_path)
@@ -49,27 +43,28 @@ func build_resource_array(directories, files, directory_path : String) -> Array:
 	
 func populate_tunnel(files : Array):
 	var previous_node_pos := Vector3.ZERO
+	var target_translate : Vector3 = Vector3.ZERO 
 	for resource in files:
 		if resource is FileResource:
 			var file_node: FileNode3D = file_node_scene.instantiate()
-			#var file_node: FileNode3D = file_node_scene.call_deferred("instantiate")
-			
-			file_node_container.call_deferred("add_child", file_node)
-			#file_node_container.add_child(file_node)
-			
+			file_node_container.add_child(file_node)
+#			
 			file_node.file_resource = resource
 			file_node.call_deferred("update_label_name")
-			#file_node.update_label_name()
 			
-			#var target_translate = Vector3(previous_node_pos.x - 1.5, previous_node_pos.y, previous_node_pos.z)
+			target_translate = Vector3(previous_node_pos.x - 1.5, previous_node_pos.y, previous_node_pos.z)
 			file_node.call_deferred("translate", previous_node_pos)
-			##file_node.translate(previous_node_pos)
-			#
+			
 			previous_node_pos = Vector3(previous_node_pos.x - 1.5, previous_node_pos.y, previous_node_pos.z)
 			file_node.on_activated.connect(node_selected)
-	semaphore.post()
+			$Timer.start()
+			await $Timer.timeout
+
 	print("Finished_PT")
 	
+func _on_timer_timeout() -> void:
+	pass # Replace with function body.
+
 	
 func clear_tunnel():
 	for node in file_node_container.get_children():
@@ -88,7 +83,6 @@ func get_initial_directories():
 
 func _ready() -> void:
 	get_initial_directories()
-
 
 
 func node_selected(node : FileNode3D):

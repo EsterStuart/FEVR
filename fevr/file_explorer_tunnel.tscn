@@ -1,7 +1,6 @@
-[gd_scene load_steps=11 format=3 uid="uid://dux26yrr2vnx6"]
+[gd_scene load_steps=10 format=3 uid="uid://dux26yrr2vnx6"]
 
 [ext_resource type="Script" path="res://file_explorer_tunnel.gd" id="1_ftqqq"]
-[ext_resource type="Texture2D" uid="uid://bqhqyq3hqj2c1" path="res://icon.svg" id="3_7wtfx"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_3qfv2"]
 sky_horizon_color = Color(0.64625, 0.65575, 0.67075, 1)
@@ -43,6 +42,7 @@ flip_faces = true
 top_radius = 3.0
 bottom_radius = 3.0
 height = 40.0
+rings = 20
 cap_top = false
 cap_bottom = false
 
@@ -77,11 +77,10 @@ render_priority = 0
 shader = SubResource("Shader_el450")
 shader_parameter/x_scale = 7.0
 shader_parameter/y_scale = 10.0
-shader_parameter/time = 0.1
+shader_parameter/time = 0.15
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_vpdef"]
 next_pass = SubResource("ShaderMaterial_bppbe")
-albedo_texture = ExtResource("3_7wtfx")
 
 [node name="FileExplorerTunnel" type="Node3D"]
 script = ExtResource("1_ftqqq")
@@ -103,3 +102,9 @@ script = SubResource("GDScript_6fdxy")
 transform = Transform3D(-4.37114e-08, 1, 0, -1, -4.37114e-08, 0, 0, 0, 1, -13.9196, 0, 1.62653)
 mesh = SubResource("CylinderMesh_53s2g")
 surface_material_override/0 = SubResource("StandardMaterial3D_vpdef")
+
+[node name="Timer" type="Timer" parent="."]
+wait_time = 0.35
+one_shot = true
+
+[connection signal="timeout" from="Timer" to="." method="_on_timer_timeout"]
