@@ -6,11 +6,10 @@ var file_node_scene = preload("res://objects/nodes/file_node_3d.tscn")
 var semaphore : Semaphore = Semaphore.new()
 var thread : Thread = Thread.new()
 
+var sub_tunnel : Node3D
 
 func create_directory(directory_path : String):
 	open_directory(directory_path)
-
-
 
 func open_directory(directory_path : String):
 		var directories = DirAccess.get_directories_at(directory_path)
@@ -20,8 +19,6 @@ func open_directory(directory_path : String):
 		populate_tunnel(resources)
 		print("finished_OD")
 		
-	
- 
 func build_resource_array(directories, files, directory_path : String) -> Array:
 	var resource_array: Array = []
 	for directory in directories:
@@ -81,15 +78,28 @@ func get_initial_directories():
 		create_directory(path)
 
 
-func _ready() -> void:
-	get_initial_directories()
+
+func collapse_tunnel():
+	self.clear_tunnel()
+	if is_instance_valid(sub_tunnel):
+		sub_tunnel.collapse_tunnel()
+	self.queue_free()
 
 
 func node_selected(node : FileNode3D):
+	var tunnel_path = load("res://objects/tunnel/file_explorer_tunnel.tscn")
 	if node.file_resource.is_directory:
-		clear_tunnel()
+		if is_instance_valid(sub_tunnel):
+			sub_tunnel.collapse_tunnel()
+			
+		var tunnel_node : Node3D = tunnel_path.instantiate()
+		self.add_child(tunnel_node)
+		sub_tunnel = tunnel_node
+		tunnel_node.global_position = node.global_position + Vector3(0,0,-5)
+		tunnel_node.create_directory(node.file_resource.path)
 		#open_directory(node.file_resource.path)
-		create_directory(node.file_resource.path)
+		#create_directory(node.file_resource.path)
+		
 	if node.file_resource.is_directory == false:
 		print(node.file_resource.file_name)
 
@@ -220,3 +230,9 @@ func node_selected(node : FileNode3D):
 		#create_directory(node.file_resource.path)
 	#if node.file_resource.is_directory == false:
 		#print(node.file_resource.file_name)
+
+
+func _on_destroy_tunnel_button_input_event(camera: Node, event: InputEvent, event_position: Vector3, normal: Vector3, shape_idx: int) -> void:
+	if event is InputEventMouseButton:
+		if event.button_index == MOUSE_BUTTON_LEFT and event.double_click:
+			collapse_tunnel()

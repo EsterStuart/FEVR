@@ -1,0 +1,67 @@
+[gd_scene load_steps=7 format=3 uid="uid://dux26yrr2vnx6"]
+
+[ext_resource type="PackedScene" uid="uid://b807dkhg5mhrq" path="res://objects/tunnel/file_explorer_tunnel.tscn" id="1_ivjv1"]
+
+[sub_resource type="GDScript" id="GDScript_ogepj"]
+resource_name = "main"
+script/source = "extends Node3D
+
+
+# Called when the node enters the scene tree for the first time.
+func _ready() -> void:
+	$FileExplorerTunnel.get_initial_directories()
+
+
+# Called every frame. 'delta' is the elapsed time since the previous frame.
+func _process(delta: float) -> void:
+	pass
+"
+
+[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_3qfv2"]
+sky_horizon_color = Color(0.64625, 0.65575, 0.67075, 1)
+ground_horizon_color = Color(0.64625, 0.65575, 0.67075, 1)
+
+[sub_resource type="Sky" id="Sky_j47eo"]
+sky_material = SubResource("ProceduralSkyMaterial_3qfv2")
+
+[sub_resource type="Environment" id="Environment_x3kf8"]
+background_mode = 1
+sky = SubResource("Sky_j47eo")
+tonemap_mode = 2
+glow_enabled = true
+
+[sub_resource type="GDScript" id="GDScript_6fdxy"]
+script/source = "extends CharacterBody3D
+
+var speed := 5.0
+func _physics_process(delta: float) -> void:
+	var direction := Input.get_vector(\"left\", \"right\", \"foward\", \"backward\")
+	direction = direction.rotated(-rotation.y)
+	velocity.x = direction.x * speed
+	velocity.z = direction.y * speed
+	
+	
+	
+	move_and_slide()
+	
+func _unhandled_input(event: InputEvent) -> void:
+	if event is InputEventKey:
+		var direction_2 := Input.get_vector(\"ui_left\", \"ui_right\", \"ui_up\",\"ui_down\")
+		rotate_y(-direction_2.x * .1)
+		$Camera3D.rotate_x(-direction_2.y * .1)
+		
+"
+
+[node name="Node3D" type="Node3D"]
+script = SubResource("GDScript_ogepj")
+
+[node name="FileExplorerTunnel" parent="." instance=ExtResource("1_ivjv1")]
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_x3kf8")
+
+[node name="Camera3D" type="CharacterBody3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 2)
+script = SubResource("GDScript_6fdxy")
+
+[node name="Camera3D" type="Camera3D" parent="Camera3D"]
